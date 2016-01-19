@@ -14,8 +14,8 @@ cd $WEBROOTFOLDER
 # Run loop until an FQDN without a current folder is entered
 until [ ! -z "$SITENAME" ]; do
 	# Prompt for website FQDN
-	printf "Site FQDN, e.g. domain.com, or sub.domain.com:\n"
-	read FQDN
+	read -e -p "Site FQDN, e.g. domain.com, or sub.domain.com: " FQDN
+
 	if [ ! -d "$FQDN" ]; then 
 		SITENAME=$FQDN
 	else
@@ -24,7 +24,7 @@ until [ ! -z "$SITENAME" ]; do
 	fi
 done
 
-read -e -p "Which user should own this directory? e.g. $USER:" -i "" SITEOWNER
+read -e -p "Which user should own this directory? e.g. $USER: " SITEOWNER
 
 USER=$(getent passwd $SITEOWNER)
 if [ -z "$USER" ]; then

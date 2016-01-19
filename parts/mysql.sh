@@ -2,20 +2,23 @@
 
 # Run loop until MySQL user has been authenticated
 until [ ! -z "$MYSQLUSER" ] && [ ! -z "$MYSQLPASSWORD" ]; do
-	# Prompt for MySQL user
-	printf "MySQL admin user:\n" -i "$MYSQLUSER"
-	read DBUSER
-	# Prompt for MySQL password
-	printf "MySQL password:\n" -i "$MYSQLPASSWORD"
-	read DBPASSWD
+	
+  # Prompt for MySQL user
+  read -e -p "MySQL admin user: " -i "$MYSQLUSER" DBUSER
+	
+  # Prompt for MySQL password
+  read -e -s -p "MySQL password: " -i "$MYSQLPASSWORD" DBPASSWD
+  
 	# Try to log in to MySQL with the supplied details
 	CONNECTION=$(mysql -u $DBUSER --password=$DBPASSWD -e "SELECT User FROM mysql.user WHERE Host = 'localhost';"|grep "$SITEOWNER")
 	if [ "$CONNECTION" = "$SITEOWNER" ] || [ "$CONNECTION" = "" ]; then
-		# Successful login to MySQL server - set variables
-		printf "MySQL database name:\n"
-		read DBNAME
+	
+	# Successful login to MySQL server - set variables
+		read -e -p "MySQL database name: " DBNAME
+
 		MYSQLUSER=$DBUSER
 		MYSQLPASSWORD=$DBPASSWD
+
 		# Log in to MySQL properly and create the new user and database
 		NEWDB=$(mysql -u $MYSQLUSER -p$MYSQLPASSWORD -e "CREATE DATABASE IF NOT EXISTS $DBNAME")
 		if [ ! -z "$NEWDB" ]; then
